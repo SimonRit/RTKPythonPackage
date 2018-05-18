@@ -18,8 +18,7 @@ jobs:
             chmod u+x BuildLinuxWheels.sh
             ./BuildLinuxWheels.sh
       - store_artifacts:
-          path: dist
-          destination: dist
+          path: ~/RTKPythonPackage-build/RTK/dist
 
 workflows:
     version: 2
