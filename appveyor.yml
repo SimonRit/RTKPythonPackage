@@ -1,0 +1,17 @@
+branches:
+ only:
+  - master
+
+version: "0.0.1.{build}"
+
+build_script:
+  - cd "%APPVEYOR_BUILD_FOLDER%" & mkdir build & cd build
+  - cmake "%APPVEYOR_BUILD_FOLDER%"
+  - ps: .\BuildWindowsWheels.ps1
+
+test: off
+
+artifacts:
+  - path: build\RTK\dist\*
+
+deploy: off
