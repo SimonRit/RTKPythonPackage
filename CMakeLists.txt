@@ -19,3 +19,6 @@ execute_process(
 # Copy build scripts
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/BuildLinuxWheels.sh
   ${CMAKE_BINARY_DIR}/BuildLinuxWheels.sh COPYONLY)
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/BuildWindowsWheels.ps1
+  ${CMAKE_BINARY_DIR}/BuildWindowsWheels.ps1 COPYONLY)
