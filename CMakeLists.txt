@@ -3,7 +3,7 @@ project(RTKPythonPackage)
 cmake_minimum_required(VERSION 2.8)
 
 # RTK git tag
-set(GIT_TAG 6becead1161dcac0f2ba59a1238168b33bb97e3f)
+set(GIT_TAG 33107fb777bff65b78dd35695375a1213241610a)
 
 find_package(Git)
 
