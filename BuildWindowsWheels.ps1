@@ -7,7 +7,7 @@ trap { Write-Error $_; Exit 1 }
 cd RTK
 
 # Fetch script from https://rawgit.com/InsightSoftwareConsortium/ITKPythonPackage
-curl https://rawgit.com/InsightSoftwareConsortium/ITKPythonPackage/master/scripts/windows-download-cache-and-build-module-wheels.ps1 -OutFile windows-download-cache-and-build-module-wheels.ps1
+curl https://raw.githubusercontent.com/InsightSoftwareConsortium/ITKPythonPackage/master/scripts/windows-download-cache-and-build-module-wheels.ps1 -O
 
 # Remove call to the build script to only perform the download step.
 # This allows for altering the cache in case sources are not up-to-date
@@ -28,7 +28,7 @@ if(!(Test-Path -Path 'C:\P\IPP\scripts')){
 
 # Specify python version to build wheels
 $file='C:\P\IPP\scripts\internal\windows_build_common.py'
-$replace_line='DEFAULT_PY_ENVS = ["35-x64", "36-x64"]'
+$replace_line='DEFAULT_PY_ENVS = ["35-x64", "36-x64", "37-x64"]'
 $command='DEFAULT_PY_ENVS = ["36-x64"]'
 (Get-Content $file).replace($replace_line, $command) | Set-Content $file
 
@@ -49,13 +49,10 @@ $file='C:\P\IPP\standalone-build\ITK-source\Wrapping\Generators\Python\CMakeList
 # Add CMake options
 $after_line='"-DBUILD_TESTING:BOOL=OFF",'
 $command='"-DBUILD_TESTING:BOOL=OFF", 
-                "-DRTK_BUILD_APPLICATIONS:BOOL=OFF",'
+          "-DRTK_BUILD_APPLICATIONS:BOOL=OFF",
+          "-DRTK_USE_CUDA:BOOL=OFF",'
 $file='C:\P\IPP\scripts\windows_build_module_wheels.py'
 (Get-Content $file).replace($after_line, $command) | Set-Content $file
-
-$remove_line='"-DITK_WRAP_unsigned_short:BOOL=ON",'
-$file='C:\P\IPP\scripts\windows_build_module_wheels.py'
-(Get-Content $file).replace($remove_line, '') | Set-Content $file
 
 # Finally build Windows wheels
 C:\Python36-x64\python.exe C:\P\IPP\scripts\windows_build_module_wheels.py
