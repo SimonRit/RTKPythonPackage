@@ -1,14 +1,14 @@
 #!/bin/bash
-
+set -x
+set -e
 # This script should lie in a directory alongside with the RTK sources
 cd RTK
 
 # Fetch script from https://rawgit.com/InsightSoftwareConsortium/ITKPythonPackage
-curl -L https://rawgit.com/InsightSoftwareConsortium/ITKPythonPackage/master/scripts/dockcross-manylinux-download-cache-and-build-module-wheels.sh -O
+curl -L https://raw.githubusercontent.com/InsightSoftwareConsortium/ITKPythonPackage/master/scripts/dockcross-manylinux-download-cache-and-build-module-wheels.sh -O
 chmod u+x dockcross-manylinux-download-cache-and-build-module-wheels.sh
 
-#export ITK_PACKAGE_VERSION=v5.0a01
-export ITK_PACKAGE_VERSION=v4.13.0
+export ITK_PACKAGE_VERSION=v5.0rc01
 
 # Remove call to the build script to only perform the download step.
 # This allows for altering the cache in case sources are not up-to-date  
@@ -20,17 +20,15 @@ if [[ ! -d ITKPythonPackage ]]; then
   ./dockcross-manylinux-download-cache-and-build-module-wheels.sh
 fi
 
-# Apply patch from https://github.com/InsightSoftwareConsortium/ITK/commit/83801da92519a49934b265801d303a6531856b50
-after_line="set(image \"\${ITKN_\${name}}\")"
-additional_command="if(image STREQUAL \"\")\n      string(REPLACE \"I\" \"itkImage\" imageTemplate \${name})\n      set(image \${imageTemplate})\n    endif()"
-sed -i -e "s|$after_line|$after_line\n    $additional_command|g" \
-  ITKPythonPackage/standalone-x64-build/ITK-source/Wrapping/Generators/Python/CMakeLists.txt
-
 # Add CMake options for building the module
 after_line='-DBUILD_TESTING:BOOL=OFF \\'
-
+pwd
 rtk_build_applications='-DRTK_BUILD_APPLICATIONS:BOOL=OFF \\'
 sed -i -e "s|$after_line|$after_line\n      $rtk_build_applications|g" \
+  ITKPythonPackage/scripts/internal/manylinux-build-module-wheels.sh
+
+rtk_cuda='-DRTK_USE_CUDA:BOOL=OFF \\'
+sed -i -e "s|$after_line|$after_line\n      $rtk_cuda|g" \
   ITKPythonPackage/scripts/internal/manylinux-build-module-wheels.sh
 
 if [ $ITK_PACKAGE_VERSION == v4.13.0 ]; then
